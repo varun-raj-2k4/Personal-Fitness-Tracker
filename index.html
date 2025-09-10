@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Varun's Fitness Tracker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #1a1a1a;
+            color: #e5e7eb;
+        }
+        .container {
+            max-width: 768px;
+        }
+        .card {
+            background-color: #2c2c2c;
+            border-radius: 1.5rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
+        }
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 1rem;
+        }
+        .input-group label {
+            margin-bottom: 0.25rem;
+            font-size: 0.875rem;
+            color: #9ca3af;
+        }
+        .input-group input, .input-group textarea {
+            background-color: #e5e7eb;
+            border: 1px solid #4b5563;
+            border-radius: 0.75rem;
+            padding: 0.75rem;
+            font-size: 1rem;
+            width: 100%;
+            color: #1a1a1a;
+            transition: border-color 0.2s, background-color 0.2s;
+        }
+        .input-group input:focus, .input-group textarea:focus {
+            outline: none;
+            border-color: #60a5fa;
+            background-color: #f3f4f6;
+        }
+        .pr-input {
+            width: 120px;
+            margin-left: 0.5rem;
+            font-weight: 500;
+            color: #1a1a1a;
+            border-radius: 0.75rem;
+        }
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+        }
+        .btn-primary {
+            background-color: #60a5fa;
+            color: #1f2937;
+            box-shadow: 0 4px 6px rgba(96, 165, 250, 0.3);
+        }
+        .btn-primary:hover {
+            background-color: #3b82f6;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(59, 130, 246, 0.4);
+        }
+        .btn-secondary {
+            background-color: #4b5563;
+            color: #d1d5db;
+        }
+        .btn-secondary:hover {
+            background-color: #6b7280;
+            transform: translateY(-2px);
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: #2c2c2c;
+            margin: auto;
+            padding: 2rem;
+            border-radius: 1.5rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
+            max-width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            color: #e5e7eb;
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #4b5563;
+        }
+        .modal-header h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #9ca3af;
+            transition: color 0.2s;
+        }
+        .close-btn:hover {
+            color: #ffffff;
+        }
+        .list-item-title {
+            font-weight: 600;
+        }
+        .history-item {
+            background-color: #374151;
+        }
+        .pr-history-content .bg-gray-50 {
+            background-color: #374151;
+            color: #e5e7eb;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 min-h-screen flex items-center justify-center py-12 px-4">
+
+    <!-- Main App Container -->
+    <div id="app" class="container mx-auto p-6 flex flex-col items-center">
+        <div class="card p-6 w-full max-w-lg">
+            <h1 class="text-3xl font-bold text-center mb-4 text-blue-400">Varun's Fitness Tracker</h1>
+            <h2 id="currentDay" class="text-2xl font-semibold text-center mb-6"></h2>
+            
+            <!-- Daily Workout/Diet Form -->
+            <div id="dayContent" class="space-y-6">
+                <!-- Content will be dynamically injected here -->
+            </div>
+
+            <div id="navigationButtons" class="mt-8 flex justify-between gap-4">
+                <button id="showHistoryBtn" class="btn btn-secondary w-full" style="display: none;">View Progress</button>
+                <button id="nextDayBtn" class="btn btn-primary w-full" style="display: none;">Loading...</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div id="prHistoryModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="prHistoryModalTitle"></h3>
+                <button class="close-btn" onclick="closeModal('prHistoryModal')">&times;</button>
+            </div>
+            <div id="prHistoryContent" class="pr-history-content space-y-4"></div>
+        </div>
+    </div>
+
+    <div id="historyModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Your Progress History</h3>
+                <button class="close-btn" onclick="closeModal('historyModal')">&times;</button>
+            </div>
+            <div id="historyContent" class="space-y-6"></div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, onSnapshot, collection, query, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        setLogLevel('debug'); // For debugging Firestore operations
+
+        const firebaseConfig = {
+          apiKey: "AIzaSyCrcI0Q5sl7PGYjz7tlC_laZgSWea97CXM",
+          authDomain: "personal-fitness-tracker-74b22.firebaseapp.com",
+          projectId: "personal-fitness-tracker-74b22",
+          storageBucket: "personal-fitness-tracker-74b22.firebasestorage.app",
+          messagingSenderId: "683715725677",
+          appId: "1:683715725677:web:848d80fa5ae70c818c7264"
+        };
+        const appId = firebaseConfig.projectId;
+        const __initial_auth_token = null;
+
+        let app, auth, db, userId;
+        let currentDayData = {};
+
+        const userDocRef = (uid) => doc(db, `artifacts/${appId}/users/${uid}/fitness_data/state`);
+        const dailyDataCollectionRef = (uid) => collection(userDocRef(uid), 'daily_data');
+        const measurementsCollectionRef = (uid) => collection(userDocRef(uid), 'measurements');
+
+        const elements = {
+            currentDay: document.getElementById('currentDay'),
+            dayContent: document.getElementById('dayContent'),
+            nextDayBtn: document.getElementById('nextDayBtn'),
+            showHistoryBtn: document.getElementById('showHistoryBtn'),
+            prHistoryModal: document.getElementById('prHistoryModal'),
+            prHistoryModalTitle: document.getElementById('prHistoryModalTitle'),
+            prHistoryContent: document.getElementById('prHistoryContent'),
+            historyModal: document.getElementById('historyModal'),
+            historyContent: document.getElementById('historyContent')
+        };
+        
+        const daysData = {
+            1: {
+                weights: [
+                    { name: 'Bench Press', pr: '' }, { name: 'Incline Dumbbell Press', pr: '' },
+                    { name: 'Overhead Shoulder Press', pr: '' }, { name: 'Lateral Raises', pr: '' },
+                    { name: 'Tricep Pushdowns', pr: '' }, { name: 'Push-Ups', pr: '' }
+                ],
+                meals: [
+                    'Pre-Workout: Banana + Black Coffee', 'Post-Workout Breakfast: 4 boiled eggs (2 whole + 2 whites) + 50g oats with milk',
+                    'Lunch: 200g chicken breast + 2 rotis + salad', 'Pre-Cardio Snack: 1 apple + 10 peanuts',
+                    'Dinner: 200g chicken breast + 1 roti + veggies', 'Pre-Bed: 200g curd'
+                ],
+                cardio: 'Treadmill – 45 min (interval walk/jog)',
+                hiit: [
+                    'Lower Body at Home:', 'Jump Squats – 30s', 'Jumping Lunges – 30s', 'Glute Bridges – 30s', 'High Knees – 30s', 'Wall Sit – 30s', '(15s rest between moves × 3 rounds)'
+                ]
+            },
+            2: {
+                weights: [
+                    { name: 'Deadlifts', pr: '' }, { name: 'Pull-Ups', pr: '' },
+                    { name: 'Barbell Rows', pr: '' }, { name: 'Face Pulls', pr: '' },
+                    { name: 'Bicep Curls', pr: '' }, { name: 'Hammer Curls', pr: '' }
+                ],
+                meals: [
+                    'Pre-Workout: Banana + Black Coffee', 'Post-Workout Breakfast: 4 boiled eggs + 2 slices brown bread',
+                    'Lunch: 200g paneer curry + 2 rotis + dal + salad', 'Pre-Cardio Snack: 1 banana + 1 boiled egg',
+                    'Dinner: 200g paneer bhurji + veggies + 1 roti', 'Pre-Bed: Glass of milk'
+                ],
+                cardio: 'Cycling – 45 min (steady pace)',
+                hiit: [
+                    'Upper Body/Core at Home:', 'Push-Ups – 30s', 'Mountain Climbers – 30s', 'Plank Shoulder Taps – 30s', 'Burpees – 30s', 'Side Plank (each side) – 30s', '(15s rest × 3 rounds)'
+                ]
+            },
+            3: {
+                weights: [
+                    { name: 'Squats', pr: '' }, { name: 'Romanian Deadlifts', pr: '' },
+                    { name: 'Walking Lunges', pr: '' }, { name: 'Leg Press', pr: '' },
+                    { name: 'Calf Raises', pr: '' }, { name: 'Hanging Leg Raises', pr: '' },
+                    { name: 'Plank', pr: '' }
+                ],
+                meals: [
+                    'Pre-Workout: Banana + Black Coffee', 'Post-Workout Breakfast: 4 boiled eggs + poha/upma',
+                    'Lunch: 200g chicken breast + rice + salad', 'Pre-Cardio Snack: Apple + Black Coffee',
+                    'Dinner: 200g chicken breast + 1 roti + veggies', 'Pre-Bed: 200g curd'
+                ],
+                cardio: 'Treadmill – 45 min',
+                hiit: [
+                    'Lower Body at Home:', 'Jump Squats – 30s', 'Jumping Lunges – 30s', 'Glute Bridges – 30s', 'High Knees – 30s', 'Wall Sit – 30s', '(15s rest × 3 rounds)'
+                ]
+            },
+            4: {
+                weights: [
+                    { name: 'Incline Barbell Press', pr: '' }, { name: 'Dumbbell Shoulder Press', pr: '' },
+                    { name: 'Cable Chest Fly', pr: '' }, { name: 'Arnold Press', pr: '' },
+                    { name: 'Dips', pr: '' }, { name: 'Overhead Dumbbell Tricep Extension', pr: '' }
+                ],
+                meals: [
+                    'Pre-Workout: Banana + Black Coffee', 'Post-Workout Breakfast: 4 boiled eggs + oats with milk',
+                    'Lunch: 200g paneer curry + 2 rotis + dal', 'Pre-Cardio Snack: Apple + boiled egg',
+                    'Dinner: 200g paneer bhurji + veggies', 'Pre-Bed: Glass of milk'
+                ],
+                cardio: 'Cycling – 45 min',
+                hiit: [
+                    'Upper Body/Core at Home:', 'Push-Ups – 30s', 'Mountain Climbers – 30s', 'Plank Shoulder Taps – 30s', 'Burpees – 30s', 'Side Plank – 30s', '(15s rest × 3 rounds)'
+                ]
+            },
+            5: {
+                weights: [
+                    { name: 'Pull-Ups', pr: '' }, { name: 'T-Bar Rows', pr: '' },
+                    { name: 'Seated Cable Rows', pr: '' }, { name: 'Shrugs', pr: '' },
+                    { name: 'Concentration Curls', pr: '' }, { name: 'Reverse Fly', pr: '' }
+                ],
+                meals: [
+                    'Pre-Workout: Banana + Black Coffee', 'Post-Workout Breakfast: 4 boiled eggs + brown bread',
+                    'Lunch: 200g chicken breast + 2 rotis + salad', 'Pre-Cardio Snack: Banana + peanuts',
+                    'Dinner: 200g chicken breast + veggies + 1 roti', 'Pre-Bed: 200g curd'
+                ],
+                cardio: 'Treadmill – 45 min',
+                hiit: [
+                    'Back/Biceps at Home:', 'Jumping Jacks – 30s', 'Skater Jumps – 30s', 'Burpees + Push-Up – 30s', 'High Knees – 30s', 'Plank Jacks – 30s', '(15s rest × 3 rounds)'
+                ]
+            },
+            6: {
+                weights: [
+                    { name: 'Front Squats', pr: '' }, { name: 'Bulgarian Split Squats', pr: '' },
+                    { name: 'Stiff-Leg Deadlifts', pr: '' }, { name: 'Hip Thrusts', pr: '' },
+                    { name: 'Leg Curls', pr: '' }, { name: 'Ab Rollouts', pr: '' },
+                    { name: 'Side Plank', pr: '' }
+                ],
+                meals: [
+                    'Pre-Workout: Banana + Black Coffee', 'Post-Workout Breakfast: 3 boiled eggs + oats with milk',
+                    'Lunch: 200g paneer curry + 2 rotis + dal', 'Pre-Cardio Snack: Apple + boiled egg',
+                    'Dinner: 200g paneer bhurji + salad + 1 roti', 'Pre-Bed: Glass of milk'
+                ],
+                cardio: 'Cycling – 45 min',
+                hiit: [
+                    'Core at Home:', 'Bicycle Crunches – 30s', 'Leg Raises – 30s', 'Cross-Body Mountain Climbers – 30s', 'Russian Twists – 30s', 'Plank Hold – 30s', '(15s rest × 3 rounds)'
+                ]
+            },
+            7: {
+                weights: [],
+                meals: [
+                    'Pre-Workout: Banana + Black Coffee', 'Workout: Light walk or yoga',
+                    'Breakfast: 4 boiled eggs + oats with milk', 'Lunch: 200g chicken breast + rice + veggies',
+                    'Pre-Cardio Snack: Apple + peanuts', 'Dinner: 200g chicken breast + 1 roti + stir-fry veggies',
+                    'Pre-Bed: 200g curd'
+                ],
+                cardio: 'Light walk – 30 min',
+                hiit: [
+                    'Home:', 'Skipping rope or mobility drills 15–20 min'
+                ]
+            }
+        };
+
+        function showModal(modalId) {
+            document.getElementById(modalId).style.display = 'flex';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+        
+        function renderInitialSetupScreen() {
+            elements.dayContent.innerHTML = `
+                <div id="initialSetup" class="card p-6 mb-6">
+                    <h3 class="text-xl font-bold mb-4">Initial Measurements</h3>
+                    <p class="text-gray-400 mb-4">Please enter your starting weight and waist size to begin your journey.</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="input-group">
+                            <label for="startWeight">Starting Weight (kg)</label>
+                            <input type="number" id="startWeight" placeholder="Enter your weight" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="startWaist">Starting Waist Size (cm)</label>
+                            <input type="number" id="startWaist" placeholder="Enter your waist size" required>
+                        </div>
+                    </div>
+                    <button id="startTrackerBtn" class="btn btn-primary w-full mt-4">Start Tracker</button>
+                </div>
+            `;
+            elements.currentDay.textContent = '';
+            elements.nextDayBtn.style.display = 'none';
+            elements.showHistoryBtn.style.display = 'none';
+            document.getElementById('startTrackerBtn').onclick = async () => {
+                await initializeFirebaseAndStart();
+            };
+        }
+
+        async function initializeFirebaseAndStart() {
+            try {
+                app = initializeApp(firebaseConfig);
+                auth = getAuth(app);
+                db = getFirestore(app);
+
+                onAuthStateChanged(auth, async (user) => {
+                    if (user) {
+                        userId = user.uid;
+                        const userStateRef = userDocRef(userId);
+
+                        onSnapshot(userStateRef, (docSnap) => {
+                            const data = docSnap.data();
+                            const currentDay = data ? data.currentDay : 1;
+                            renderDayContent(currentDay);
+                            elements.nextDayBtn.onclick = async () => {
+                                await saveDailyData(currentDay);
+                                if (currentDay > 1 && currentDay % 7 === 0) {
+                                    await saveMeasurementData(currentDay);
+                                }
+                                await setDoc(userStateRef, { currentDay: currentDay + 1 }, { merge: true });
+                            };
+                            elements.showHistoryBtn.onclick = showFullHistory;
+                            elements.showHistoryBtn.style.display = 'block';
+                        }, (error) => {
+                            console.error("Firestore listen error: ", error);
+                            elements.dayContent.innerHTML = `<p class="text-red-400 text-center">Failed to load data. Please check your connection.</p>`;
+                        });
+                        
+                        // Save initial measurements after auth is ready
+                        const startWeight = document.getElementById('startWeight').value;
+                        const startWaist = document.getElementById('startWaist').value;
+                        if (startWeight && startWaist) {
+                            await setDoc(userStateRef, { currentDay: 1 });
+                            const measurementDocRef = doc(measurementsCollectionRef(userId), `Day_1`);
+                            await setDoc(measurementDocRef, {
+                                day: 1, date: new Date(),
+                                weight: parseFloat(startWeight), waist: parseFloat(startWaist)
+                            });
+                        }
+                    } else {
+                        try {
+                            if (__initial_auth_token) {
+                                await signInWithCustomToken(auth, __initial_auth_token);
+                            } else {
+                                await signInAnonymously(auth);
+                            }
+                        } catch (error) {
+                            console.error("Firebase auth error:", error);
+                            elements.dayContent.innerHTML = `<p class="text-red-400 text-center">Authentication failed. Please try again.</p>`;
+                        }
+                    }
+                });
+            } catch (e) {
+                console.error("Firebase initialization failed:", e);
+                elements.dayContent.innerHTML = `<p class="text-red-400 text-center">Failed to initialize the app. Please try again.</p>`;
+            }
+        }
+
+
+        function renderDayContent(dayNum) {
+            const dayKey = (dayNum - 1) % 7 + 1;
+            const dailyRoutine = daysData[dayKey];
+
+            let htmlContent = '';
+            
+            // Render Body Measurement inputs if it's a weekly check-in day (Day 7, 14, 21...)
+            if (dayNum > 1 && dayNum % 7 === 0) {
+                htmlContent += `
+                    <div class="card p-6 mt-6">
+                        <h3 class="text-xl font-bold mb-4">Weekly Check-in</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="input-group">
+                                <label for="bodyWeight">Body Weight (kg)</label>
+                                <input type="number" id="bodyWeight" class="text-gray-900" placeholder="Enter your weight">
+                            </div>
+                            <div class="input-group">
+                                <label for="waistSize">Waist Size (cm)</label>
+                                <input type="number" id="waistSize" class="text-gray-900" placeholder="Enter your waist size">
+                            </div>
+                        </div>
+                        <button onclick="showBodyMeasurementHistory()" class="btn btn-secondary w-full mt-4">View Measurements</button>
+                    </div>
+                `;
+            }
+
+            // Render PR inputs for exercises
+            if (dailyRoutine.weights && dailyRoutine.weights.length > 0) {
+                htmlContent += `
+                    <div class="card p-6 mt-6">
+                        <h3 class="text-2xl font-bold mb-4">Weights</h3>
+                        <ol class="list-decimal list-inside space-y-2 pl-4">
+                `;
+                dailyRoutine.weights.forEach(exercise => {
+                    htmlContent += `
+                        <li class="flex justify-between items-center pr-3">
+                            <div class="flex-1">
+                                <label class="flex justify-between items-center text-base font-medium">
+                                    <span>${exercise.name}</span>
+                                    <span class="text-xs text-gray-400 cursor-pointer hover:underline" onclick="showPRHistory('${exercise.name}')">View PRs</span>
+                                </label>
+                            </div>
+                            <div class="flex items-center">
+                                <input type="number" id="pr_${exercise.name.replace(/\s/g, '_')}" placeholder="Weight" class="pr-input rounded-xl" />
+                            </div>
+                        </li>
+                    `;
+                });
+                htmlContent += `
+                        </ol>
+                    </div>
+                `;
+            }
+
+            // Render Meals, Cardio, and HIIT details
+            htmlContent += `
+                <div class="card p-6 mt-6">
+                    <h3 class="text-xl font-bold mb-4">Today's Plan</h3>
+                    
+                    <div class="mb-4">
+                        <h4 class="font-semibold text-lg mb-2">Meals</h4>
+                        <ul class="list-disc list-inside space-y-2 text-gray-300">
+            `;
+            dailyRoutine.meals.forEach(meal => {
+                htmlContent += `<li>${meal}</li>`;
+            });
+            htmlContent += `
+                        </ul>
+                    </div>
+
+                    <div class="mb-4">
+                        <h4 class="font-semibold text-lg mb-2">Cardio</h4>
+                        <p class="text-gray-300">${dailyRoutine.cardio}</p>
+                    </div>
+
+                    <div>
+                        <h4 class="font-semibold text-lg mb-2">HIIT</h4>
+                        <ul class="list-disc list-inside space-y-2 text-gray-300">
+            `;
+            dailyRoutine.hiit.forEach(item => {
+                htmlContent += `<li>${item}</li>`;
+            });
+            htmlContent += `
+                        </ul>
+                    </div>
+                </div>
+            `;
+            elements.dayContent.innerHTML = htmlContent;
+            elements.currentDay.textContent = `Day ${dayNum}`;
+            elements.nextDayBtn.textContent = 'Go to Next Day';
+            elements.nextDayBtn.style.display = 'block';
+            elements.showHistoryBtn.style.display = 'block';
+
+            // Attach listeners to PR inputs to save data
+            dailyRoutine.weights.forEach(exercise => {
+                const input = document.getElementById(`pr_${exercise.name.replace(/\s/g, '_')}`);
+                if (input) {
+                    input.addEventListener('input', (e) => {
+                        const prValue = e.target.value;
+                        if (prValue) {
+                            currentDayData[exercise.name] = prValue;
+                        } else {
+                            delete currentDayData[exercise.name];
+                        }
+                    });
+                }
+            });
+        }
+
+        async function saveDailyData(dayNum) {
+            if (!userId) {
+                console.error("User not authenticated.");
+                return;
+            }
+
+            const dayDocRef = doc(dailyDataCollectionRef(userId), `Day_${dayNum}`);
+            const dataToSave = {
+                day: dayNum,
+                date: new Date(),
+                prs: currentDayData
+            };
+            
+            try {
+                await setDoc(dayDocRef, dataToSave, { merge: true });
+                currentDayData = {}; // Clear for the next day
+                console.log("Daily data saved for Day", dayNum);
+            } catch (e) {
+                console.error("Error saving daily data: ", e);
+            }
+        }
+
+        async function saveMeasurementData(dayNum) {
+            if (!userId) {
+                console.error("User not authenticated.");
+                return;
+            }
+            const weightInput = document.getElementById('bodyWeight');
+            const waistInput = document.getElementById('waistSize');
+            const dataToSave = {
+                day: dayNum,
+                date: new Date(),
+                weight: weightInput.value ? parseFloat(weightInput.value) : null,
+                waist: waistInput.value ? parseFloat(waistInput.value) : null
+            };
+            const measurementDocRef = doc(measurementsCollectionRef(userId), `Day_${dayNum}`);
+            try {
+                await setDoc(measurementDocRef, dataToSave, { merge: true });
+                console.log("Measurements saved for Day", dayNum);
+            } catch (e) {
+                console.error("Error saving measurements: ", e);
+            }
+        }
+
+        async function showBodyMeasurementHistory() {
+            if (!userId) {
+                console.error("User not authenticated.");
+                return;
+            }
+            showModal('historyModal');
+            document.querySelector('#historyModal .modal-header h3').textContent = 'Body Measurements History';
+            elements.historyContent.innerHTML = '<p class="text-center text-gray-400">Loading history...</p>';
+            try {
+                const measurementsSnapshot = await getDocs(query(measurementsCollectionRef(userId)));
+                const allMeasurements = measurementsSnapshot.docs.map(doc => doc.data());
+                
+                let historyHtml = '<div class="space-y-4">';
+
+                if (allMeasurements.length === 0) {
+                    historyHtml += '<p class="text-center text-gray-400">No measurements recorded yet.</p>';
+                } else {
+                    allMeasurements.sort((a, b) => a.day - b.day);
+                    allMeasurements.forEach(measurement => {
+                        const day = measurement.day;
+                        const date = measurement.date.toDate().toLocaleDateString();
+                        const weight = measurement.weight ? `${measurement.weight} kg` : 'N/A';
+                        const waist = measurement.waist ? `${measurement.waist} cm` : 'N/A';
+                        historyHtml += `
+                            <div class="history-item p-4 rounded-md mt-2">
+                                <h4 class="text-lg font-bold">Day ${day} (${date})</h4>
+                                <p class="text-sm ml-4">Weight: ${weight}</p>
+                                <p class="text-sm ml-4">Waist Size: ${waist}</p>
+                            </div>
+                        `;
+                    });
+                }
+
+                historyHtml += '</div>';
+                elements.historyContent.innerHTML = historyHtml;
+            } catch (e) {
+                console.error("Error fetching body measurement history: ", e);
+                elements.historyContent.innerHTML = '<p class="text-red-400">Failed to load history.</p>';
+            }
+        }
+        
+        async function showPRHistory(exerciseName) {
+            if (!userId) {
+                console.error("User not authenticated.");
+                return;
+            }
+            showModal('prHistoryModal');
+            elements.prHistoryModalTitle.textContent = `${exerciseName} PR History`;
+            elements.prHistoryContent.innerHTML = '<p class="text-center text-gray-400">Loading history...</p>';
+
+            const q = query(dailyDataCollectionRef(userId));
+            try {
+                const querySnapshot = await getDocs(q);
+                let historyHtml = '';
+                const historyData = [];
+                querySnapshot.forEach(doc => {
+                    const data = doc.data();
+                    if (data.prs && data.prs[exerciseName]) {
+                        historyData.push({
+                            day: data.day, pr: data.prs[exerciseName],
+                            date: data.date.toDate().toLocaleDateString()
+                        });
+                    }
+                });
+
+                if (historyData.length === 0) {
+                    historyHtml = '<p class="text-center text-gray-400">No PRs recorded yet for this exercise.</p>';
+                } else {
+                    historyData.sort((a, b) => b.day - a.day);
+                    historyData.forEach(item => {
+                        historyHtml += `
+                            <div class="history-item p-3 rounded-lg flex justify-between items-center">
+                                <div>
+                                    <p class="font-bold text-xl">${item.pr} kg</p>
+                                    <p class="text-sm text-gray-400">Day ${item.day}</p>
+                                </div>
+                                <p class="text-sm text-gray-400">${item.date}</p>
+                            </div>
+                        `;
+                    });
+                }
+                elements.prHistoryContent.innerHTML = historyHtml;
+            } catch (e) {
+                console.error("Error fetching PR history: ", e);
+                elements.prHistoryContent.innerHTML = '<p class="text-red-400">Failed to load history.</p>';
+            }
+        }
+
+        async function showFullHistory() {
+            if (!userId) {
+                console.error("User not authenticated.");
+                return;
+            }
+            showModal('historyModal');
+            document.querySelector('#historyModal .modal-header h3').textContent = 'Your Progress History';
+            elements.historyContent.innerHTML = '<p class="text-center text-gray-400">Loading history...</p>';
+            try {
+                const dailyDataSnapshot = await getDocs(query(dailyDataCollectionRef(userId)));
+                const allDailyData = dailyDataSnapshot.docs.map(doc => doc.data());
+                
+                const measurementsSnapshot = await getDocs(query(measurementsCollectionRef(userId)));
+                const allMeasurements = measurementsSnapshot.docs.map(doc => doc.data());
+                
+                let historyHtml = '<div class="space-y-4">';
+                allDailyData.sort((a, b) => a.day - b.day);
+                
+                const combinedData = new Map();
+                allDailyData.forEach(d => combinedData.set(d.day, {...d}));
+                allMeasurements.forEach(m => {
+                    if (combinedData.has(m.day)) {
+                        combinedData.get(m.day).bodyMeasurements = { weight: m.weight, waist: m.waist };
+                    }
+                });
+
+                const sortedCombined = [...combinedData.values()].sort((a, b) => a.day - b.day);
+
+                sortedCombined.forEach(dayData => {
+                    const day = dayData.day;
+                    const date = dayData.date.toDate().toLocaleDateString();
+                    historyHtml += `<h4 class="text-lg font-bold">Day ${day} (${date})</h4>`;
+
+                    if (dayData.prs && Object.keys(dayData.prs).length > 0) {
+                        historyHtml += `<div class="history-item p-4 rounded-md mt-2"><p class="font-semibold">PRs:</p>`;
+                        for (const exercise in dayData.prs) {
+                            historyHtml += `<p class="text-sm ml-4">${exercise}: ${dayData.prs[exercise]} kg</p>`;
+                        }
+                        historyHtml += `</div>`;
+                    }
+                    if (dayData.bodyMeasurements && (dayData.bodyMeasurements.weight || dayData.bodyMeasurements.waist)) {
+                        historyHtml += `<div class="history-item p-4 rounded-md mt-2"><p class="font-semibold">Measurements:</p>`;
+                        if (dayData.bodyMeasurements.weight) {
+                            historyHtml += `<p class="text-sm ml-4">Body Weight: ${dayData.bodyMeasurements.weight} kg</p>`;
+                        }
+                        if (dayData.bodyMeasurements.waist) {
+                            historyHtml += `<p class="text-sm ml-4">Waist Size: ${dayData.bodyMeasurements.waist} cm</p>`;
+                        }
+                        historyHtml += `</div>`;
+                    }
+                });
+
+                historyHtml += '</div>';
+                elements.historyContent.innerHTML = historyHtml;
+            } catch (e) {
+                console.error("Error fetching full history: ", e);
+                elements.historyContent.innerHTML = '<p class="text-red-400">Failed to load history.</p>';
+            }
+        }
+        
+        window.showPRHistory = showPRHistory;
+        window.closeModal = closeModal;
+        window.showBodyMeasurementHistory = showBodyMeasurementHistory;
+        
+        renderInitialSetupScreen();
+    </script>
+</body>
+</html>

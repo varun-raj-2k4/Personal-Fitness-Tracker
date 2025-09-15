@@ -30,7 +30,8 @@
             font-size: 0.875rem;
             color: #9ca3af;
         }
-        .input-group input, .input-group textarea {
+        .input-group input,
+        .input-group textarea {
             background-color: #e5e7eb;
             border: 1px solid #4b5563;
             border-radius: 0.75rem;
@@ -40,7 +41,8 @@
             color: #1a1a1a;
             transition: border-color 0.2s, background-color 0.2s;
         }
-        .input-group input:focus, .input-group textarea:focus {
+        .input-group input:focus,
+        .input-group textarea:focus {
             outline: none;
             border-color: #60a5fa;
             background-color: #f3f4f6;
@@ -86,7 +88,7 @@
             width: 100%;
             height: 100%;
             overflow: auto;
-            background-color: rgba(0,0,0,0.5);
+            background-color: rgba(0, 0, 0, 0.5);
             backdrop-filter: blur(5px);
             -webkit-backdrop-filter: blur(5px);
             justify-content: center;
@@ -140,16 +142,13 @@
 </head>
 <body class="bg-gray-900 min-h-screen flex items-center justify-center py-12 px-4">
 
-    <!-- Main App Container -->
     <div id="app" class="container mx-auto p-6 flex flex-col items-center">
         <div class="card p-6 w-full max-w-lg">
             <h1 class="text-3xl font-bold text-center mb-4 text-blue-400">Varun's Fitness Tracker</h1>
             <h2 id="currentDay" class="text-2xl font-semibold text-center mb-6"></h2>
-            
-            <!-- Daily Workout/Diet Form -->
+
             <div id="dayContent" class="space-y-6">
-                <!-- Content will be dynamically injected here -->
-            </div>
+                </div>
 
             <div id="navigationButtons" class="mt-8 flex justify-between gap-4">
                 <button id="showHistoryBtn" class="btn btn-secondary w-full" style="display: none;">View Progress</button>
@@ -158,7 +157,6 @@
         </div>
     </div>
 
-    <!-- Modals -->
     <div id="prHistoryModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -180,20 +178,38 @@
     </div>
 
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, onSnapshot, collection, query, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-        import { setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import {
+            initializeApp
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import {
+            getAuth,
+            signInAnonymously,
+            signInWithCustomToken,
+            onAuthStateChanged
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import {
+            getFirestore,
+            doc,
+            getDoc,
+            setDoc,
+            onSnapshot,
+            collection,
+            query,
+            getDocs
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import {
+            setLogLevel
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         setLogLevel('debug'); // For debugging Firestore operations
 
         const firebaseConfig = {
-          apiKey: "AIzaSyCrcI0Q5sl7PGYjz7tlC_laZgSWea97CXM",
-          authDomain: "personal-fitness-tracker-74b22.firebaseapp.com",
-          projectId: "personal-fitness-tracker-74b22",
-          storageBucket: "personal-fitness-tracker-74b22.firebasestorage.app",
-          messagingSenderId: "683715725677",
-          appId: "1:683715725677:web:848d80fa5ae70c818c7264"
+            apiKey: "AIzaSyCrcI0Q5sl7PGYjz7tlC_laZgSWea97CXM",
+            authDomain: "personal-fitness-tracker-74b22.firebaseapp.com",
+            projectId: "personal-fitness-tracker-74b22",
+            storageBucket: "personal-fitness-tracker-74b22.firebasestorage.app",
+            messagingSenderId: "683715725677",
+            appId: "1:683715725677:web:848d80fa5ae70c818c7264"
         };
         const appId = firebaseConfig.projectId;
         const __initial_auth_token = null;
@@ -216,183 +232,129 @@
             historyModal: document.getElementById('historyModal'),
             historyContent: document.getElementById('historyContent')
         };
-        
+
         const daysData = {
-             "1": {
-                "weights": [
-                    { "name": "Barbell bench press", "pr": "" },
-                    { "name": "Overhead barbell shoulder press", "pr": "" },
-                    { "name": "Incline dumbbell press", "pr": "" },
-                    { "name": "Dumbbell lateral raises", "pr": "" },
-                    { "name": "Weighted dips", "pr": "" },
-                    { "name": "Rope tricep push down", "pr": "" }
-                ],
-                "meals": [
-                    "Pre-Workout: Banana + Black Coffee",
-                    "Post-Workout Breakfast: 4 boiled eggs (2 whole + 2 whites) + 50g oats with milk",
-                    "Lunch: 200g chicken breast + 2 rotis + salad",
-                    "Pre-Cardio Snack: 1 apple + 10 peanuts",
-                    "Dinner: 200g chicken breast + 1 roti + veggies",
-                    "Pre-Bed: 200g curd"
-                ],
-                "cardio": "Treadmill – 45 min (interval walk/jog)",
-                "hiit": [
-                    "Lower Body at Home:",
-                    "Jump Squats – 30s",
-                    "Jumping Lunges – 30s",
-                    "Glute Bridges – 30s",
-                    "High Knees – 30s",
-                    "Wall Sit – 30s",
-                    "(15s rest between moves × 3 rounds)"
-                ]
-            },
-            "2": {
-                "weights": [
-                    { "name": "Weighted pull-ups", "pr": "" },
-                    { "name": "Banded pull-ups", "pr": "" },
-                    { "name": "Assisted pull-ups", "pr": "" },
-                    { "name": "Bent over barbell rows", "pr": "" },
-                    { "name": "Wide grip lat pull down", "pr": "" },
-                    { "name": "Chest supported dumbbell rows", "pr": "" },
-                    { "name": "Straight bar bicep curls", "pr": "" },
-                    { "name": "Incline dumbbell curls", "pr": "" }
-                ],
-                "meals": [
-                    "Pre-Workout: Banana + Black Coffee",
-                    "Post-Workout Breakfast: 4 boiled eggs + 2 slices brown bread",
-                    "Lunch: 200g paneer curry + 2 rotis + dal + salad",
-                    "Pre-Cardio Snack: 1 banana + 1 boiled egg",
-                    "Dinner: 200g paneer bhurji + veggies + 1 roti",
-                    "Pre-Bed: Glass of milk"
-                ],
-                "cardio": "Cycling – 45 min (steady pace)",
-                "hiit": [
-                    "Upper Body/Core at Home:",
-                    "Push-Ups – 30s",
-                    "Mountain Climbers – 30s",
-                    "Plank Shoulder Taps – 30s",
-                    "Burpees – 30s",
-                    "Side Plank (each side) – 30s",
-                    "(15s rest × 3 rounds)"
-                ]
-            },
-            "3": {
-                "weights": [
-                    { "name": "Barbell back squat", "pr": "" },
-                    { "name": "Romanian deadlift with a barbell", "pr": "" },
-                    { "name": "Bulgarian split squats", "pr": "" },
-                    { "name": "Hack squats", "pr": "" },
-                    { "name": "Goblet squats with elevated heels", "pr": "" },
-                    { "name": "Seated or lying down leg curls", "pr": "" },
-                    { "name": "Standing calf raises", "pr": "" }
-                ],
-                "meals": [
-                    "Pre-Workout: Banana + Black Coffee",
-                    "Post-Workout Breakfast: 4 boiled eggs + poha/upma",
-                    "Lunch: 200g chicken breast + rice + salad",
-                    "Pre-Cardio Snack: Apple + Black Coffee",
-                    "Dinner: 200g chicken breast + 1 roti + veggies",
-                    "Pre-Bed: 200g curd"
-                ],
-                "cardio": "Treadmill – 45 min",
-                "hiit": [
-                    "Lower Body at Home:",
-                    "Jump Squats – 30s",
-                    "Jumping Lunges – 30s",
-                    "Glute Bridges – 30s",
-                    "High Knees – 30s",
-                    "Wall Sit – 30s",
-                    "(15s rest × 3 rounds)"
-                ]
-            },
-            "4": {
-                "weights": [
-                    { "name": "Incline Smith machine chest press", "pr": "" },
-                    { "name": "Dumbbell Arnold press", "pr": "" },
-                    { "name": "Flat cable flies", "pr": "" },
-                    { "name": "Single arm cable lateral raises", "pr": "" },
-                    { "name": "Tricep press down with a straight bar", "pr": "" },
-                    { "name": "Overhead tricep extension with dumbbells", "pr": "" },
-                    { "name": "Push-up ladder", "pr": "" }
-                ],
-                "meals": [
-                    "Pre-Workout: Banana + Black Coffee",
-                    "Post-Workout Breakfast: 4 boiled eggs + oats with milk",
-                    "Lunch: 200g paneer curry + 2 rotis + dal",
-                    "Pre-Cardio Snack: Apple + boiled egg",
-                    "Dinner: 200g paneer bhurji + veggies",
-                    "Pre-Bed: Glass of milk"
-                ],
-                "cardio": "Cycling – 45 min",
-                "hiit": [
-                    "Upper Body/Core at Home:",
-                    "Push-Ups – 30s",
-                    "Mountain Climbers – 30s",
-                    "Plank Shoulder Taps – 30s",
-                    "Burpees – 30s",
-                    "Side Plank – 30s",
-                    "(15s rest × 3 rounds)"
-                ]
-            },
-            "5": {
-                "weights": [
-                    { "name": "Closed grip seated rows", "pr": "" },
-                    { "name": "Wide grip seated row", "pr": "" },
-                    { "name": "Close grip lat pull down", "pr": "" },
-                    { "name": "Reverse cable flies", "pr": "" },
-                    { "name": "Cable rope hammer curls", "pr": "" },
-                    { "name": "EZ bar preacher curls", "pr": "" },
-                    { "name": "Kettlebell swings", "pr": "" }
-                ],
-                "meals": [
-                    "Pre-Workout: Banana + Black Coffee",
-                    "Post-Workout Breakfast: 4 boiled eggs + brown bread",
-                    "Lunch: 200g chicken breast + 2 rotis + salad",
-                    "Pre-Cardio Snack: Banana + peanuts",
-                    "Dinner: 200g chicken breast + veggies + 1 roti",
-                    "Pre-Bed: 200g curd"
-                ],
-                "cardio": "Treadmill – 45 min",
-                "hiit": [
-                    "Back/Biceps at Home:",
-                    "Jumping Jacks – 30s",
-                    "Skater Jumps – 30s",
-                    "Burpees + Push-Up – 30s",
-                    "High Knees – 30s",
-                    "Plank Jacks – 30s",
-                    "(15s rest × 3 rounds)"
-                ]
-            },
-            "6": {
-                "weights": [
-                    { "name": "Regular stance leg press", "pr": "" },
-                    { "name": "Weighted walking lunges", "pr": "" },
-                    { "name": "Leg extensions", "pr": "" },
-                    { "name": "Elevated heel goblet squats", "pr": "" },
-                    { "name": "Lying down leg curls", "pr": "" },
-                    { "name": "Seated calf raises", "pr": "" },
-                    { "name": "Squat jumps", "pr": "" },
-                    { "name": "Wall sits", "pr": "" }
-                ],
-                "meals": [
-                    "Pre-Workout: Banana + Black Coffee",
-                    "Post-Workout Breakfast: 3 boiled eggs + oats with milk",
-                    "Lunch: 200g paneer curry + 2 rotis + dal",
-                    "Pre-Cardio Snack: Apple + boiled egg",
-                    "Dinner: 200g paneer bhurji + salad + 1 roti",
-                    "Pre-Bed: Glass of milk"
-                ],
-                "cardio": "Cycling – 45 min",
-                "hiit": [
-                    "Core at Home:",
-                    "Bicycle Crunches – 30s",
-                    "Leg Raises – 30s",
-                    "Cross-Body Mountain Climbers – 30s",
-                    "Russian Twists – 30s",
-                    "Plank Hold – 30s",
-                    "(15s rest × 3 rounds)"
-                ]
-            },
+            1: {
+                weights: [
+                    { 'name': 'Barbell bench press', 'pr': '' },
+                    { 'name': 'Overhead barbell shoulder press', 'pr': '' },
+                    { 'name': 'Incline dumbbell press', 'pr': '' },
+                    { 'name': 'Dumbbell lateral raises', 'pr': '' },
+                    { 'name': 'Weighted dips', 'pr': '' },
+                    { 'name': 'Rope tricep push down', 'pr': '' }
+                ],
+                meals: [
+                    'Pre-Workout: Banana + Black Coffee', 'Post-Workout Breakfast: 4 boiled eggs (2 whole + 2 whites) + 50g oats with milk',
+                    'Lunch: 200g chicken breast + 2 rotis + salad', 'Pre-Cardio Snack: 1 apple + 10 peanuts',
+                    'Dinner: 200g chicken breast + 1 roti + veggies', 'Pre-Bed: 200g curd'
+                ],
+                cardio: 'Treadmill – 45 min (interval walk/jog)',
+                hiit: [
+                    'Lower Body at Home:', 'Jump Squats – 30s', 'Jumping Lunges – 30s', 'Glute Bridges – 30s', 'High Knees – 30s', 'Wall Sit – 30s', '(15s rest between moves × 3 rounds)'
+                ]
+            },
+            2: {
+                weights: [
+                    { 'name': 'Weighted pull-ups', 'pr': '' },
+                    { 'name': 'Banded pull-ups', 'pr': '' },
+                    { 'name': 'Assisted pull-ups', 'pr': '' },
+                    { 'name': 'Bent over barbell rows', 'pr': '' },
+                    { 'name': 'Wide grip lat pull down', 'pr': '' },
+                    { 'name': 'Chest supported dumbbell rows', 'pr': '' },
+                    { 'name': 'Straight bar bicep curls', 'pr': '' },
+                    { 'name': 'Incline dumbbell curls', 'pr': '' }
+                ],
+                meals: [
+                    'Pre-Workout: Banana + Black Coffee', 'Post-Workout Breakfast: 4 boiled eggs + 2 slices brown bread',
+                    'Lunch: 200g paneer curry + 2 rotis + dal + salad', 'Pre-Cardio Snack: 1 banana + 1 boiled egg',
+                    'Dinner: 200g paneer bhurji + veggies + 1 roti', 'Pre-Bed: Glass of milk'
+                ],
+                cardio: 'Cycling – 45 min (steady pace)',
+                hiit: [
+                    'Upper Body/Core at Home:', 'Push-Ups – 30s', 'Mountain Climbers – 30s', 'Plank Shoulder Taps – 30s', 'Burpees – 30s', 'Side Plank (each side) – 30s', '(15s rest × 3 rounds)'
+                ]
+            },
+            3: {
+                weights: [
+                    { 'name': 'Barbell back squat', 'pr': '' },
+                    { 'name': 'Romanian deadlift with a barbell', 'pr': '' },
+                    { 'name': 'Bulgarian split squats', 'pr': '' },
+                    { 'name': 'Hack squats', 'pr': '' },
+                    { 'name': 'Goblet squats with elevated heels', 'pr': '' },
+                    { 'name': 'Seated or lying down leg curls', 'pr': '' },
+                    { 'name': 'Standing calf raises', 'pr': '' }
+                ],
+                meals: [
+                    'Pre-Workout: Banana + Black Coffee', 'Post-Workout Breakfast: 4 boiled eggs + poha/upma',
+                    'Lunch: 200g chicken breast + rice + salad', 'Pre-Cardio Snack: Apple + Black Coffee',
+                    'Dinner: 200g chicken breast + 1 roti + veggies', 'Pre-Bed: 200g curd'
+                ],
+                cardio: 'Treadmill – 45 min',
+                hiit: [
+                    'Lower Body at Home:', 'Jump Squats – 30s', 'Jumping Lunges – 30s', 'Glute Bridges – 30s', 'High Knees – 30s', 'Wall Sit – 30s', '(15s rest × 3 rounds)'
+                ]
+            },
+            4: {
+                weights: [
+                    { 'name': 'Incline Smith machine chest press', 'pr': '' },
+                    { 'name': 'Dumbbell Arnold press', 'pr': '' },
+                    { 'name': 'Flat cable flies', 'pr': '' },
+                    { 'name': 'Single arm cable lateral raises', 'pr': '' },
+                    { 'name': 'Tricep press down with a straight bar', 'pr': '' },
+                    { 'name': 'Overhead tricep extension with dumbbells', 'pr': '' },
+                    { 'name': 'Push-up ladder', 'pr': '' }
+                ],
+                meals: [
+                    'Pre-Workout: Banana + Black Coffee', 'Post-Workout Breakfast: 4 boiled eggs + oats with milk',
+                    'Lunch: 200g paneer curry + 2 rotis + dal', 'Pre-Cardio Snack: Apple + boiled egg',
+                    'Dinner: 200g paneer bhurji + veggies', 'Pre-Bed: Glass of milk'
+                ],
+                cardio: 'Cycling – 45 min',
+                hiit: [
+                    'Upper Body/Core at Home:', 'Push-Ups – 30s', 'Mountain Climbers – 30s', 'Plank Shoulder Taps – 30s', 'Burpees – 30s', 'Side Plank – 30s', '(15s rest × 3 rounds)'
+                ]
+            },
+            5: {
+                weights: [
+                    { 'name': 'Closed grip seated rows', 'pr': '' },
+                    { 'name': 'Wide grip seated row', 'pr': '' },
+                    { 'name': 'Close grip lat pull down', 'pr': '' },
+                    { 'name': 'Reverse cable flies', 'pr': '' },
+                    { 'name': 'Cable rope hammer curls', 'pr': '' },
+                    { 'name': 'EZ bar preacher curls', 'pr': '' },
+                    { 'name': 'Kettlebell swings', 'pr': '' }
+                ],
+                meals: [
+                    'Pre-Workout: Banana + Black Coffee', 'Post-Workout Breakfast: 4 boiled eggs + brown bread',
+                    'Lunch: 200g chicken breast + 2 rotis + salad', 'Pre-Cardio Snack: Banana + peanuts',
+                    'Dinner: 200g chicken breast + veggies + 1 roti', 'Pre-Bed: 200g curd'
+                ],
+                cardio: 'Treadmill – 45 min',
+                hiit: [
+                    'Back/Biceps at Home:', 'Jumping Jacks – 30s', 'Skater Jumps – 30s', 'Burpees + Push-Up – 30s', 'High Knees – 30s', 'Plank Jacks – 30s', '(15s rest × 3 rounds)'
+                ]
+            },
+            6: {
+                weights: [
+                    { 'name': 'Regular stance leg press', 'pr': '' },
+                    { 'name': 'Weighted walking lunges', 'pr': '' },
+                    { 'name': 'Leg extensions', 'pr': '' },
+                    { 'name': 'Elevated heel goblet squats', 'pr': '' },
+                    { 'name': 'Lying down leg curls', 'pr': '' },
+                    { 'name': 'Seated calf raises', 'pr': '' },
+                    { 'name': 'Squat jumps', 'pr': '' },
+                    { 'name': 'Wall sits', 'pr': '' }
+                ],
+                meals: [
+                    'Pre-Workout: Banana + Black Coffee', 'Post-Workout Breakfast: 3 boiled eggs + oats with milk',
+                    'Lunch: 200g paneer curry + 2 rotis + dal', 'Pre-Cardio Snack: Apple + boiled egg',
+                    'Dinner: 200g paneer bhurji + salad + 1 roti', 'Pre-Bed: Glass of milk'
+                ],
+                cardio: 'Cycling – 45 min',
+                hiit: [
+                    'Core at Home:', 'Bicycle Crunches – 30s', 'Leg Raises – 30s', 'Cross-Body Mountain Climbers – 30s', 'Russian Twists – 30s', 'Plank Hold – 30s', '(15s rest × 3 rounds)'
+                ]
+            },
             7: {
                 weights: [],
                 meals: [
@@ -415,7 +377,7 @@
         function closeModal(modalId) {
             document.getElementById(modalId).style.display = 'none';
         }
-        
+
         function renderInitialSetupScreen() {
             elements.dayContent.innerHTML = `
                 <div id="initialSetup" class="card p-6 mb-6">
@@ -462,7 +424,11 @@
                                 if (currentDay > 1 && currentDay % 7 === 0) {
                                     await saveMeasurementData(currentDay);
                                 }
-                                await setDoc(userStateRef, { currentDay: currentDay + 1 }, { merge: true });
+                                await setDoc(userStateRef, {
+                                    currentDay: currentDay + 1
+                                }, {
+                                    merge: true
+                                });
                             };
                             elements.showHistoryBtn.onclick = showFullHistory;
                             elements.showHistoryBtn.style.display = 'block';
@@ -470,16 +436,20 @@
                             console.error("Firestore listen error: ", error);
                             elements.dayContent.innerHTML = `<p class="text-red-400 text-center">Failed to load data. Please check your connection.</p>`;
                         });
-                        
+
                         // Save initial measurements after auth is ready
                         const startWeight = document.getElementById('startWeight').value;
                         const startWaist = document.getElementById('startWaist').value;
                         if (startWeight && startWaist) {
-                            await setDoc(userStateRef, { currentDay: 1 });
+                            await setDoc(userStateRef, {
+                                currentDay: 1
+                            });
                             const measurementDocRef = doc(measurementsCollectionRef(userId), `Day_1`);
                             await setDoc(measurementDocRef, {
-                                day: 1, date: new Date(),
-                                weight: parseFloat(startWeight), waist: parseFloat(startWaist)
+                                day: 1,
+                                date: new Date(),
+                                weight: parseFloat(startWeight),
+                                waist: parseFloat(startWaist)
                             });
                         }
                     } else {
@@ -507,7 +477,7 @@
             const dailyRoutine = daysData[dayKey];
 
             let htmlContent = '';
-            
+
             // Render Body Measurement inputs if it's a weekly check-in day (Day 7, 14, 21...)
             if (dayNum > 1 && dayNum % 7 === 0) {
                 htmlContent += `
@@ -623,9 +593,11 @@
                 date: new Date(),
                 prs: currentDayData
             };
-            
+
             try {
-                await setDoc(dayDocRef, dataToSave, { merge: true });
+                await setDoc(dayDocRef, dataToSave, {
+                    merge: true
+                });
                 currentDayData = {}; // Clear for the next day
                 console.log("Daily data saved for Day", dayNum);
             } catch (e) {
@@ -648,7 +620,9 @@
             };
             const measurementDocRef = doc(measurementsCollectionRef(userId), `Day_${dayNum}`);
             try {
-                await setDoc(measurementDocRef, dataToSave, { merge: true });
+                await setDoc(measurementDocRef, dataToSave, {
+                    merge: true
+                });
                 console.log("Measurements saved for Day", dayNum);
             } catch (e) {
                 console.error("Error saving measurements: ", e);
@@ -666,7 +640,7 @@
             try {
                 const measurementsSnapshot = await getDocs(query(measurementsCollectionRef(userId)));
                 const allMeasurements = measurementsSnapshot.docs.map(doc => doc.data());
-                
+
                 let historyHtml = '<div class="space-y-4">';
 
                 if (allMeasurements.length === 0) {
@@ -695,7 +669,7 @@
                 elements.historyContent.innerHTML = '<p class="text-red-400">Failed to load history.</p>';
             }
         }
-        
+
         async function showPRHistory(exerciseName) {
             if (!userId) {
                 console.error("User not authenticated.");
@@ -714,7 +688,8 @@
                     const data = doc.data();
                     if (data.prs && data.prs[exerciseName]) {
                         historyData.push({
-                            day: data.day, pr: data.prs[exerciseName],
+                            day: data.day,
+                            pr: data.prs[exerciseName],
                             date: data.date.toDate().toLocaleDateString()
                         });
                     }
@@ -754,18 +729,22 @@
             try {
                 const dailyDataSnapshot = await getDocs(query(dailyDataCollectionRef(userId)));
                 const allDailyData = dailyDataSnapshot.docs.map(doc => doc.data());
-                
+
                 const measurementsSnapshot = await getDocs(query(measurementsCollectionRef(userId)));
                 const allMeasurements = measurementsSnapshot.docs.map(doc => doc.data());
-                
+
                 let historyHtml = '<div class="space-y-4">';
                 allDailyData.sort((a, b) => a.day - b.day);
-                
+
                 const combinedData = new Map();
-                allDailyData.forEach(d => combinedData.set(d.day, {...d}));
+                allDailyData.forEach(d => combinedData.set(d.day, { ...d
+                }));
                 allMeasurements.forEach(m => {
                     if (combinedData.has(m.day)) {
-                        combinedData.get(m.day).bodyMeasurements = { weight: m.weight, waist: m.waist };
+                        combinedData.get(m.day).bodyMeasurements = {
+                            weight: m.weight,
+                            waist: m.waist
+                        };
                     }
                 });
 
@@ -802,11 +781,11 @@
                 elements.historyContent.innerHTML = '<p class="text-red-400">Failed to load history.</p>';
             }
         }
-        
+
         window.showPRHistory = showPRHistory;
         window.closeModal = closeModal;
         window.showBodyMeasurementHistory = showBodyMeasurementHistory;
-        
+
         renderInitialSetupScreen();
     </script>
 </body>

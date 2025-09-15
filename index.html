@@ -218,104 +218,181 @@
         };
         
         const daysData = {
-            1: {
-                weights: [
-                    { name: 'Bench Press', pr: '' }, { name: 'Incline Dumbbell Press', pr: '' },
-                    { name: 'Overhead Shoulder Press', pr: '' }, { name: 'Lateral Raises', pr: '' },
-                    { name: 'Tricep Pushdowns', pr: '' }, { name: 'Push-Ups', pr: '' }
-                ],
-                meals: [
-                    'Pre-Workout: Banana + Black Coffee', 'Post-Workout Breakfast: 4 boiled eggs (2 whole + 2 whites) + 50g oats with milk',
-                    'Lunch: 200g chicken breast + 2 rotis + salad', 'Pre-Cardio Snack: 1 apple + 10 peanuts',
-                    'Dinner: 200g chicken breast + 1 roti + veggies', 'Pre-Bed: 200g curd'
-                ],
-                cardio: 'Treadmill – 45 min (interval walk/jog)',
-                hiit: [
-                    'Lower Body at Home:', 'Jump Squats – 30s', 'Jumping Lunges – 30s', 'Glute Bridges – 30s', 'High Knees – 30s', 'Wall Sit – 30s', '(15s rest between moves × 3 rounds)'
-                ]
-            },
-            2: {
-                weights: [
-                    { name: 'Deadlifts', pr: '' }, { name: 'Pull-Ups', pr: '' },
-                    { name: 'Barbell Rows', pr: '' }, { name: 'Face Pulls', pr: '' },
-                    { name: 'Bicep Curls', pr: '' }, { name: 'Hammer Curls', pr: '' }
-                ],
-                meals: [
-                    'Pre-Workout: Banana + Black Coffee', 'Post-Workout Breakfast: 4 boiled eggs + 2 slices brown bread',
-                    'Lunch: 200g paneer curry + 2 rotis + dal + salad', 'Pre-Cardio Snack: 1 banana + 1 boiled egg',
-                    'Dinner: 200g paneer bhurji + veggies + 1 roti', 'Pre-Bed: Glass of milk'
-                ],
-                cardio: 'Cycling – 45 min (steady pace)',
-                hiit: [
-                    'Upper Body/Core at Home:', 'Push-Ups – 30s', 'Mountain Climbers – 30s', 'Plank Shoulder Taps – 30s', 'Burpees – 30s', 'Side Plank (each side) – 30s', '(15s rest × 3 rounds)'
-                ]
-            },
-            3: {
-                weights: [
-                    { name: 'Squats', pr: '' }, { name: 'Romanian Deadlifts', pr: '' },
-                    { name: 'Walking Lunges', pr: '' }, { name: 'Leg Press', pr: '' },
-                    { name: 'Calf Raises', pr: '' }, { name: 'Hanging Leg Raises', pr: '' },
-                    { name: 'Plank', pr: '' }
-                ],
-                meals: [
-                    'Pre-Workout: Banana + Black Coffee', 'Post-Workout Breakfast: 4 boiled eggs + poha/upma',
-                    'Lunch: 200g chicken breast + rice + salad', 'Pre-Cardio Snack: Apple + Black Coffee',
-                    'Dinner: 200g chicken breast + 1 roti + veggies', 'Pre-Bed: 200g curd'
-                ],
-                cardio: 'Treadmill – 45 min',
-                hiit: [
-                    'Lower Body at Home:', 'Jump Squats – 30s', 'Jumping Lunges – 30s', 'Glute Bridges – 30s', 'High Knees – 30s', 'Wall Sit – 30s', '(15s rest × 3 rounds)'
-                ]
-            },
-            4: {
-                weights: [
-                    { name: 'Incline Barbell Press', pr: '' }, { name: 'Dumbbell Shoulder Press', pr: '' },
-                    { name: 'Cable Chest Fly', pr: '' }, { name: 'Arnold Press', pr: '' },
-                    { name: 'Dips', pr: '' }, { name: 'Overhead Dumbbell Tricep Extension', pr: '' }
-                ],
-                meals: [
-                    'Pre-Workout: Banana + Black Coffee', 'Post-Workout Breakfast: 4 boiled eggs + oats with milk',
-                    'Lunch: 200g paneer curry + 2 rotis + dal', 'Pre-Cardio Snack: Apple + boiled egg',
-                    'Dinner: 200g paneer bhurji + veggies', 'Pre-Bed: Glass of milk'
-                ],
-                cardio: 'Cycling – 45 min',
-                hiit: [
-                    'Upper Body/Core at Home:', 'Push-Ups – 30s', 'Mountain Climbers – 30s', 'Plank Shoulder Taps – 30s', 'Burpees – 30s', 'Side Plank – 30s', '(15s rest × 3 rounds)'
-                ]
-            },
-            5: {
-                weights: [
-                    { name: 'Pull-Ups', pr: '' }, { name: 'T-Bar Rows', pr: '' },
-                    { name: 'Seated Cable Rows', pr: '' }, { name: 'Shrugs', pr: '' },
-                    { name: 'Concentration Curls', pr: '' }, { name: 'Reverse Fly', pr: '' }
-                ],
-                meals: [
-                    'Pre-Workout: Banana + Black Coffee', 'Post-Workout Breakfast: 4 boiled eggs + brown bread',
-                    'Lunch: 200g chicken breast + 2 rotis + salad', 'Pre-Cardio Snack: Banana + peanuts',
-                    'Dinner: 200g chicken breast + veggies + 1 roti', 'Pre-Bed: 200g curd'
-                ],
-                cardio: 'Treadmill – 45 min',
-                hiit: [
-                    'Back/Biceps at Home:', 'Jumping Jacks – 30s', 'Skater Jumps – 30s', 'Burpees + Push-Up – 30s', 'High Knees – 30s', 'Plank Jacks – 30s', '(15s rest × 3 rounds)'
-                ]
-            },
-            6: {
-                weights: [
-                    { name: 'Front Squats', pr: '' }, { name: 'Bulgarian Split Squats', pr: '' },
-                    { name: 'Stiff-Leg Deadlifts', pr: '' }, { name: 'Hip Thrusts', pr: '' },
-                    { name: 'Leg Curls', pr: '' }, { name: 'Ab Rollouts', pr: '' },
-                    { name: 'Side Plank', pr: '' }
-                ],
-                meals: [
-                    'Pre-Workout: Banana + Black Coffee', 'Post-Workout Breakfast: 3 boiled eggs + oats with milk',
-                    'Lunch: 200g paneer curry + 2 rotis + dal', 'Pre-Cardio Snack: Apple + boiled egg',
-                    'Dinner: 200g paneer bhurji + salad + 1 roti', 'Pre-Bed: Glass of milk'
-                ],
-                cardio: 'Cycling – 45 min',
-                hiit: [
-                    'Core at Home:', 'Bicycle Crunches – 30s', 'Leg Raises – 30s', 'Cross-Body Mountain Climbers – 30s', 'Russian Twists – 30s', 'Plank Hold – 30s', '(15s rest × 3 rounds)'
-                ]
-            },
+             "1": {
+                "weights": [
+                    { "name": "Barbell bench press", "pr": "" },
+                    { "name": "Overhead barbell shoulder press", "pr": "" },
+                    { "name": "Incline dumbbell press", "pr": "" },
+                    { "name": "Dumbbell lateral raises", "pr": "" },
+                    { "name": "Weighted dips", "pr": "" },
+                    { "name": "Rope tricep push down", "pr": "" }
+                ],
+                "meals": [
+                    "Pre-Workout: Banana + Black Coffee",
+                    "Post-Workout Breakfast: 4 boiled eggs (2 whole + 2 whites) + 50g oats with milk",
+                    "Lunch: 200g chicken breast + 2 rotis + salad",
+                    "Pre-Cardio Snack: 1 apple + 10 peanuts",
+                    "Dinner: 200g chicken breast + 1 roti + veggies",
+                    "Pre-Bed: 200g curd"
+                ],
+                "cardio": "Treadmill – 45 min (interval walk/jog)",
+                "hiit": [
+                    "Lower Body at Home:",
+                    "Jump Squats – 30s",
+                    "Jumping Lunges – 30s",
+                    "Glute Bridges – 30s",
+                    "High Knees – 30s",
+                    "Wall Sit – 30s",
+                    "(15s rest between moves × 3 rounds)"
+                ]
+            },
+            "2": {
+                "weights": [
+                    { "name": "Weighted pull-ups", "pr": "" },
+                    { "name": "Banded pull-ups", "pr": "" },
+                    { "name": "Assisted pull-ups", "pr": "" },
+                    { "name": "Bent over barbell rows", "pr": "" },
+                    { "name": "Wide grip lat pull down", "pr": "" },
+                    { "name": "Chest supported dumbbell rows", "pr": "" },
+                    { "name": "Straight bar bicep curls", "pr": "" },
+                    { "name": "Incline dumbbell curls", "pr": "" }
+                ],
+                "meals": [
+                    "Pre-Workout: Banana + Black Coffee",
+                    "Post-Workout Breakfast: 4 boiled eggs + 2 slices brown bread",
+                    "Lunch: 200g paneer curry + 2 rotis + dal + salad",
+                    "Pre-Cardio Snack: 1 banana + 1 boiled egg",
+                    "Dinner: 200g paneer bhurji + veggies + 1 roti",
+                    "Pre-Bed: Glass of milk"
+                ],
+                "cardio": "Cycling – 45 min (steady pace)",
+                "hiit": [
+                    "Upper Body/Core at Home:",
+                    "Push-Ups – 30s",
+                    "Mountain Climbers – 30s",
+                    "Plank Shoulder Taps – 30s",
+                    "Burpees – 30s",
+                    "Side Plank (each side) – 30s",
+                    "(15s rest × 3 rounds)"
+                ]
+            },
+            "3": {
+                "weights": [
+                    { "name": "Barbell back squat", "pr": "" },
+                    { "name": "Romanian deadlift with a barbell", "pr": "" },
+                    { "name": "Bulgarian split squats", "pr": "" },
+                    { "name": "Hack squats", "pr": "" },
+                    { "name": "Goblet squats with elevated heels", "pr": "" },
+                    { "name": "Seated or lying down leg curls", "pr": "" },
+                    { "name": "Standing calf raises", "pr": "" }
+                ],
+                "meals": [
+                    "Pre-Workout: Banana + Black Coffee",
+                    "Post-Workout Breakfast: 4 boiled eggs + poha/upma",
+                    "Lunch: 200g chicken breast + rice + salad",
+                    "Pre-Cardio Snack: Apple + Black Coffee",
+                    "Dinner: 200g chicken breast + 1 roti + veggies",
+                    "Pre-Bed: 200g curd"
+                ],
+                "cardio": "Treadmill – 45 min",
+                "hiit": [
+                    "Lower Body at Home:",
+                    "Jump Squats – 30s",
+                    "Jumping Lunges – 30s",
+                    "Glute Bridges – 30s",
+                    "High Knees – 30s",
+                    "Wall Sit – 30s",
+                    "(15s rest × 3 rounds)"
+                ]
+            },
+            "4": {
+                "weights": [
+                    { "name": "Incline Smith machine chest press", "pr": "" },
+                    { "name": "Dumbbell Arnold press", "pr": "" },
+                    { "name": "Flat cable flies", "pr": "" },
+                    { "name": "Single arm cable lateral raises", "pr": "" },
+                    { "name": "Tricep press down with a straight bar", "pr": "" },
+                    { "name": "Overhead tricep extension with dumbbells", "pr": "" },
+                    { "name": "Push-up ladder", "pr": "" }
+                ],
+                "meals": [
+                    "Pre-Workout: Banana + Black Coffee",
+                    "Post-Workout Breakfast: 4 boiled eggs + oats with milk",
+                    "Lunch: 200g paneer curry + 2 rotis + dal",
+                    "Pre-Cardio Snack: Apple + boiled egg",
+                    "Dinner: 200g paneer bhurji + veggies",
+                    "Pre-Bed: Glass of milk"
+                ],
+                "cardio": "Cycling – 45 min",
+                "hiit": [
+                    "Upper Body/Core at Home:",
+                    "Push-Ups – 30s",
+                    "Mountain Climbers – 30s",
+                    "Plank Shoulder Taps – 30s",
+                    "Burpees – 30s",
+                    "Side Plank – 30s",
+                    "(15s rest × 3 rounds)"
+                ]
+            },
+            "5": {
+                "weights": [
+                    { "name": "Closed grip seated rows", "pr": "" },
+                    { "name": "Wide grip seated row", "pr": "" },
+                    { "name": "Close grip lat pull down", "pr": "" },
+                    { "name": "Reverse cable flies", "pr": "" },
+                    { "name": "Cable rope hammer curls", "pr": "" },
+                    { "name": "EZ bar preacher curls", "pr": "" },
+                    { "name": "Kettlebell swings", "pr": "" }
+                ],
+                "meals": [
+                    "Pre-Workout: Banana + Black Coffee",
+                    "Post-Workout Breakfast: 4 boiled eggs + brown bread",
+                    "Lunch: 200g chicken breast + 2 rotis + salad",
+                    "Pre-Cardio Snack: Banana + peanuts",
+                    "Dinner: 200g chicken breast + veggies + 1 roti",
+                    "Pre-Bed: 200g curd"
+                ],
+                "cardio": "Treadmill – 45 min",
+                "hiit": [
+                    "Back/Biceps at Home:",
+                    "Jumping Jacks – 30s",
+                    "Skater Jumps – 30s",
+                    "Burpees + Push-Up – 30s",
+                    "High Knees – 30s",
+                    "Plank Jacks – 30s",
+                    "(15s rest × 3 rounds)"
+                ]
+            },
+            "6": {
+                "weights": [
+                    { "name": "Regular stance leg press", "pr": "" },
+                    { "name": "Weighted walking lunges", "pr": "" },
+                    { "name": "Leg extensions", "pr": "" },
+                    { "name": "Elevated heel goblet squats", "pr": "" },
+                    { "name": "Lying down leg curls", "pr": "" },
+                    { "name": "Seated calf raises", "pr": "" },
+                    { "name": "Squat jumps", "pr": "" },
+                    { "name": "Wall sits", "pr": "" }
+                ],
+                "meals": [
+                    "Pre-Workout: Banana + Black Coffee",
+                    "Post-Workout Breakfast: 3 boiled eggs + oats with milk",
+                    "Lunch: 200g paneer curry + 2 rotis + dal",
+                    "Pre-Cardio Snack: Apple + boiled egg",
+                    "Dinner: 200g paneer bhurji + salad + 1 roti",
+                    "Pre-Bed: Glass of milk"
+                ],
+                "cardio": "Cycling – 45 min",
+                "hiit": [
+                    "Core at Home:",
+                    "Bicycle Crunches – 30s",
+                    "Leg Raises – 30s",
+                    "Cross-Body Mountain Climbers – 30s",
+                    "Russian Twists – 30s",
+                    "Plank Hold – 30s",
+                    "(15s rest × 3 rounds)"
+                ]
+            },
             7: {
                 weights: [],
                 meals: [
